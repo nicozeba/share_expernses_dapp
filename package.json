@@ -1,0 +1,23 @@
+{
+  "name": "share_expernses_dapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicozeba/share_expernses_dapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicozeba/share_expernses_dapp/issues"
+  },
+  "homepage": "https://github.com/nicozeba/share_expernses_dapp#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "hardhat": "^2.12.0"
+  }
+}
