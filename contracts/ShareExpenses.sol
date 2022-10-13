@@ -9,11 +9,8 @@ contract ShareExpenses {
   constructor(){}
 
   ///Events
-
-  // para que son esos "indexed"
   event DepositAccountCreated(
     address indexed creator,
-    // address indexed addrresToDeposit,
     uint256 amountPerPeople,
     uint256 expectedAmountOfPeople
   );
@@ -28,10 +25,13 @@ contract ShareExpenses {
     address indexed creator
   );
 
+  // Errors
+  error ShareExpenses__DepositAccountAlreadyExists(address);
+  error ShareExpenses__DepositAccountNotExists();
+  error ShareExpenses__NotAllUsersPays();  
+
   // Structures and variables
   struct DepositAccount {
-    // address addrresToDeposit;
-    // address[] depositedUsers;
     uint256 balance;
     uint256 amountPerPeople;
     uint256 expectedAmountOfPeople;
@@ -40,42 +40,59 @@ contract ShareExpenses {
 
   mapping(address => DepositAccount) private _depositAccountList;
 
-  // Validators functions
+  // Modifiers
+  // Use to know if a Deposit Account exists, if not exists continue, if exists throw an error
+  modifier depositAccountAlreadyExists(address depositAccountAddress) {
+    // If value is 0, is because the Deposit Account is not created
+    if (_depositAccountList[depositAccountAddress].amountPerPeople > 0) {
+      revert ShareExpenses__DepositAccountAlreadyExists(depositAccountAddress);
+    }
+    _;
+  }
 
-  // 1 - Checks if the msg.sender just create an DepositAccount
-  // 2- Checks if the DepositAccout associated exists
-  // 3- Only the creator can invoke retiveDepositAccountMoney
-  // 4- Checks if all the users pay the deposit to be closed
+  // Use to know if a Deposit Account not exists to continue, if exists continue, if not exists throw an error
+  modifier depositAccountNotExists(address depositAccountAddress) {
+    // If value is 0, is because the Deposit Account is not created
+    if (_depositAccountList[depositAccountAddress].amountPerPeople == 0) {
+      revert ShareExpenses__DepositAccountNotExists();
+    }
+    _;
+  }
+
+  // check if the amount of expected users pays the debt
+  modifier notAllUsersPays(address depositAccountAddress){
+    if (_depositAccountList[depositAccountAddress].realAmountOfPeople < _depositAccountList[depositAccountAddress].expectedAmountOfPeople) {
+      revert ShareExpenses__NotAllUsersPays();
+    }
+    _;    
+  }
 
   // Smart Contract Functios
-  // Needs to check 1
   function createDepositAccount(
     // address addrresToDeposit,
     uint256 amountPerPeople,
     uint256 expectedAmountOfPeople
-  ) external {
-    _depositAccountList[msg.sender] = DepositAccount( 0, amountPerPeople, expectedAmountOfPeople, 0);
+  ) external depositAccountAlreadyExists(msg.sender) {
+    _depositAccountList[msg.sender] = DepositAccount(0, amountPerPeople, expectedAmountOfPeople, 0);
     emit DepositAccountCreated(msg.sender, amountPerPeople, expectedAmountOfPeople);
   }
 
-  // Needs to check 2
   function payToDepositAccount(
     address addrresToDeposit,
     uint256 amount
-  ) external payable {
+  ) external payable depositAccountNotExists(addrresToDeposit){
     _depositAccountList[addrresToDeposit].realAmountOfPeople += 1;
     _depositAccountList[addrresToDeposit].balance += amount;
     emit DepositAccountPayed(msg.sender, addrresToDeposit, amount);
   }
 
-  // Needs to check 2, 3 and 4
-  function retriveDepositAccountMoney() external {
+  function retriveDepositAccountMoney() external depositAccountNotExists(msg.sender) notAllUsersPays(msg.sender){
     payable(msg.sender).transfer(_depositAccountList[msg.sender].balance);
     delete (_depositAccountList[msg.sender]);
     emit DepositAccountClosed(msg.sender);    
   }
 
-  function getBalance() external view returns(uint256){
+  function getBalance() external view returns(uint256) {
     return address(this).balance;
   }
 }
