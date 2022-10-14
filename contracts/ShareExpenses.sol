@@ -27,7 +27,7 @@ contract ShareExpenses {
 
   // Errors
   error ShareExpenses__DepositAccountAlreadyExists(address);
-  error ShareExpenses__DepositAccountNotExists();
+  error ShareExpenses__DepositAccountNotExists(address);
   error ShareExpenses__NotAllUsersPays();  
 
   // Structures and variables
@@ -54,7 +54,7 @@ contract ShareExpenses {
   modifier depositAccountNotExists(address depositAccountAddress) {
     // If value is 0, is because the Deposit Account is not created
     if (_depositAccountList[depositAccountAddress].amountPerPeople == 0) {
-      revert ShareExpenses__DepositAccountNotExists();
+      revert ShareExpenses__DepositAccountNotExists(depositAccountAddress);
     }
     _;
   }
