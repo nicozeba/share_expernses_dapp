@@ -15,8 +15,6 @@ async function main() {
     ` Account 3: ${ethers.utils.formatEther(await accounts[3].getBalance())}`
   );
 
-  // const ShareExpenses = await ethers.getContractFactory("ShareExpenses");
-  // const shareExpenses = await ShareExpenses.attach(accounts[0].address);
   var shareExpenses = await ethers.getContractAt(
     "ShareExpenses",
     "0x5FbDB2315678afecb367f032d93F642f64180aa3",

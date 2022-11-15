@@ -2,11 +2,6 @@ import { ethers } from "hardhat";
 
 async function main() {
   const accounts = await ethers.getSigners();
-  // const ShareExpenses = await ethers.getContractFactory("ShareExpenses");
-
-  // console.log(ethers.utils.parseEther("0.00000000000000001"));
-
-  // var shareExpenses = ShareExpenses.attach(accounts[2].address);
   var shareExpenses = await ethers.getContractAt(
     "ShareExpenses",
     "0x5FbDB2315678afecb367f032d93F642f64180aa3",
@@ -20,7 +15,6 @@ async function main() {
     }
   );
 
-  // shareExpenses = ShareExpenses.attach(accounts[3].address);
   shareExpenses = await ethers.getContractAt(
     "ShareExpenses",
     "0x5FbDB2315678afecb367f032d93F642f64180aa3",
